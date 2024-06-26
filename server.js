@@ -1,11 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const app_1 = require("./app");
-const db_1 = __importDefault(require("./utils/db"));
-const cloudinary_1 = require("cloudinary");
+var app_1 = require("./app");
+var db_1 = require("./utils/db");
+var cloudinary_1 = require("cloudinary");
 require("dotenv").config();
 //cloudiinary config
 cloudinary_1.v2.config({
@@ -14,7 +11,7 @@ cloudinary_1.v2.config({
     api_secret: process.env.CLOUD_SECRET_KEY
 });
 //creating server
-app_1.app.listen(process.env.PORT, () => {
-    console.log(`server is connected with port ${process.env.PORT}`);
+app_1.app.listen(process.env.PORT, function () {
+    console.log("server is connected with port ".concat(process.env.PORT));
     (0, db_1.default)();
 });

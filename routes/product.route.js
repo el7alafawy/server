@@ -1,12 +1,9 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const product_controller_1 = require("../controllers/product.controller");
-const auth_1 = require("../middleware/auth");
-const productRouter = express_1.default.Router();
+var express_1 = require("express");
+var product_controller_1 = require("../controllers/product.controller");
+var auth_1 = require("../middleware/auth");
+var productRouter = express_1.default.Router();
 productRouter.post("/create-product", auth_1.isAuthenticated, (0, auth_1.authorizeRoles)("admin"), product_controller_1.uploadProduct);
 productRouter.put("/edit-product/:id", auth_1.isAuthenticated, (0, auth_1.authorizeRoles)("admin"), product_controller_1.editProduct);
 productRouter.get("/get-products", product_controller_1.getAllProducts);

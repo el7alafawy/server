@@ -1,20 +1,17 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
-const express_1 = __importDefault(require("express"));
-const cors_1 = __importDefault(require("cors"));
-const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const error_1 = require("./middleware/error");
-const user_route_1 = __importDefault(require("./routes/user.route"));
-const course_route_1 = __importDefault(require("./routes/course.route"));
-const order_route_1 = __importDefault(require("./routes/order.route"));
-const notification_router_1 = __importDefault(require("./routes/notification.router"));
-const analytics_route_1 = __importDefault(require("./routes/analytics.route"));
-const layout_route_1 = __importDefault(require("./routes/layout.route"));
-const product_route_1 = __importDefault(require("./routes/product.route"));
+var express_1 = require("express");
+var cors_1 = require("cors");
+var cookie_parser_1 = require("cookie-parser");
+var error_1 = require("./middleware/error");
+var user_route_1 = require("./routes/user.route");
+var course_route_1 = require("./routes/course.route");
+var order_route_1 = require("./routes/order.route");
+var notification_router_1 = require("./routes/notification.router");
+var analytics_route_1 = require("./routes/analytics.route");
+var layout_route_1 = require("./routes/layout.route");
+var product_route_1 = require("./routes/product.route");
 require("dotenv").config();
 exports.app = (0, express_1.default)();
 // body parser
@@ -35,15 +32,15 @@ exports.app.use("/api/v1", analytics_route_1.default);
 exports.app.use("/api/v1", layout_route_1.default);
 exports.app.use("/api/v1", product_route_1.default);
 // testing api
-exports.app.get("/test", (req, res, next) => {
+exports.app.get("/test", function (req, res, next) {
     res.status(200).json({
         success: true,
         message: "api is working",
     });
 });
 // unknown route
-exports.app.all("*", (req, res, next) => {
-    const err = new Error(`Route ${req.originalUrl} not found`);
+exports.app.all("*", function (req, res, next) {
+    var err = new Error("Route ".concat(req.originalUrl, " not found"));
     res.status(404);
     next(err);
 });

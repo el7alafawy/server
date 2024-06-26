@@ -8,39 +8,76 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authorizeRoles = exports.isAuthenticated = void 0;
-const catchAsyncErrors_1 = require("./catchAsyncErrors");
-const ErrorHandler_1 = __importDefault(require("../utils/ErrorHandler"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const redis_1 = require("../utils/redis");
+var catchAsyncErrors_1 = require("./catchAsyncErrors");
+var ErrorHandler_1 = require("../utils/ErrorHandler");
+var jsonwebtoken_1 = require("jsonwebtoken");
+var redis_1 = require("../utils/redis");
 require("dotenv").config();
 //Authenticated User
-exports.isAuthenticated = (0, catchAsyncErrors_1.CatchAsyncMiddleware)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const access_token = req.cookies.access_token;
-    if (!access_token) {
-        return next(new ErrorHandler_1.default("Please login to access this resourse", 400));
-    }
-    const decoded = jsonwebtoken_1.default.verify(access_token, process.env.ACCESS_TOKEN);
-    if (!decoded) {
-        return next(new ErrorHandler_1.default("Access Token is not valid", 400));
-    }
-    const user = yield redis_1.redis.get(decoded.id);
-    if (!user) {
-        return next(new ErrorHandler_1.default("User not found", 404));
-    }
-    req.user = JSON.parse(user);
-    next();
-}));
+exports.isAuthenticated = (0, catchAsyncErrors_1.CatchAsyncMiddleware)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var access_token, decoded, user;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                access_token = req.cookies.access_token;
+                if (!access_token) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("Please login to access this resourse", 400))];
+                }
+                decoded = jsonwebtoken_1.default.verify(access_token, process.env.ACCESS_TOKEN);
+                if (!decoded) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("Access Token is not valid", 400))];
+                }
+                return [4 /*yield*/, redis_1.redis.get(decoded.id)];
+            case 1:
+                user = _a.sent();
+                if (!user) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("User not found", 404))];
+                }
+                req.user = JSON.parse(user);
+                next();
+                return [2 /*return*/];
+        }
+    });
+}); });
 //Validate User Role
-const authorizeRoles = (...roles) => {
-    return (req, res, next) => {
+var authorizeRoles = function () {
+    var roles = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        roles[_i] = arguments[_i];
+    }
+    return function (req, res, next) {
         var _a, _b;
         if (!roles.includes(((_a = req.user) === null || _a === void 0 ? void 0 : _a.role) || "")) {
-            return next(new ErrorHandler_1.default(`Role: ${(_b = req.user) === null || _b === void 0 ? void 0 : _b.role} is not allowed to access this resource`, 403));
+            return next(new ErrorHandler_1.default("Role: ".concat((_b = req.user) === null || _b === void 0 ? void 0 : _b.role, " is not allowed to access this resource"), 403));
         }
         next();
     };
