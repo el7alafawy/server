@@ -10,6 +10,7 @@ import path from "path";
 import ejs from "ejs";
 import sendMail from "../utils/sendMail";
 import NotificationModel from "../models/notification.model";
+import axios from "axios";
 // upload course
 export const uploadCourse = CatchAsyncMiddleware(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -57,7 +58,15 @@ export const editCourse = CatchAsyncMiddleware(
         },
         { new: true }
       );
-
+      const courses = await CourseModel.find().select(
+        "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
+      );
+      await redis.set("allCourses", JSON.stringify(courses));
+      const isCacheExist = await redis.get(courseId);
+      if(isCacheExist)
+        {
+          await redis.set(courseId,JSON.stringify(course));
+        }
       res.status(201).json({
         success: true,
         course,
@@ -128,6 +137,47 @@ export const getAllCourses = CatchAsyncMiddleware(
   }
 );
 
+export const getTopCourses = CatchAsyncMiddleware(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const courses = await CourseModel.find().sort({ratings: -1}).limit(4).select(
+          "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
+        );
+        res.status(200).json({
+          success: true,
+          courses,
+        });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+//Top Reviews
+export const getTopReviews = CatchAsyncMiddleware(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const isCacheExist = await redis.get("topReviews");
+      if (isCacheExist) {
+        const reviews = JSON.parse(isCacheExist);
+        res.status(200).json({
+          success: true,
+          reviews,
+        });
+      } else {
+        const reviews = await CourseModel.find().sort({ratings: -1}).limit(4).select(
+          "-courseData -name -description -price -estimatedPrice -tags -level -demoUrl -benefits -prerequisites -purchased -ratings -reviews.commentReplies"
+        );
+        await redis.set("topReviews", JSON.stringify(reviews));
+        res.status(200).json({
+          success: true,
+          reviews,
+        });
+      }
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
 //get course content --valid user
 export const getCourseByUser = CatchAsyncMiddleware(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -152,6 +202,21 @@ export const getCourseByUser = CatchAsyncMiddleware(
   }
 );
 
+//get course  --For Admin
+export const getCourseByAdmin = CatchAsyncMiddleware(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const courseId = req.params.id;
+      const course = await CourseModel.findById(courseId);
+      res.status(200).json({
+        success: true,
+        course,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
 //add questions to course
 interface IAddQuestionData {
   question: string;
@@ -401,12 +466,44 @@ export const deleteCourse = CatchAsyncMiddleware(
       }
       await course.deleteOne({ id });
       await redis.del(id);
+      const isCacheExist = await redis.get("allCourses");
+      if(isCacheExist)
+        {
+          const courses = await CourseModel.find().select(
+            "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
+          );
+          await redis.set("allCourses", JSON.stringify(courses));
+        }
       res.status(200).json({
         success: true,
         message: "Course deleted successfully",
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+//generate video url
+export const generateVideoUrl = CatchAsyncMiddleware(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { videoId } = req.body;
+      const response = await axios.post(
+        `https://dev.vdocipher.com/api/videos/${videoId}/otp`,
+        { ttl: 300 },
+        {
+          headers: {
+            Accept: "application/json",
+            'Content-Type': "application/json",
+            Authorization: `Apisecret ${process.env.VDO_CIPHER_API_SECRET}`,
+          },
+        }
+      );
+
+      res.json(response.data);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
     }
   }
 );

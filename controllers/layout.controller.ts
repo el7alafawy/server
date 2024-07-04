@@ -18,7 +18,8 @@ export const createLayout = CatchAsyncMiddleware(
           folder: "Layout",
         });
         const banner = {
-          image: {
+          type:"Banner",
+          banner: {
             public_id: myCloud.public_id,
             url: myCloud.secure_url,
           },

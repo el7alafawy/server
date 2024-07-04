@@ -220,10 +220,11 @@ export const updateAccessToken = CatchAsyncMiddleware(
       res.cookie("access_token", accessToken, accessTokenOptions);
       res.cookie("refresh_token", refreshToken, refreshTokenOptions);
       await redis.set(user._id,JSON.stringify(user),"EX",7 *24*60*60) //expires in 7 days | 604800 seconds
-      res.status(200).json({
-        success: true,
-        accessToken,
-      });
+      // res.status(200).json({
+      //   success: true,
+      //   accessToken,
+      // });
+      next();
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
