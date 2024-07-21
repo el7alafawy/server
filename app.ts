@@ -24,7 +24,7 @@ app.use(cookieParser());
 // cors
 app.use(
   cors({
-    origin: ['http://localhost:3000','https://al-doctor.vercel.app'],
+    origin: true,
     credentials:true,
   })
 );
