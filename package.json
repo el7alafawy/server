@@ -11,7 +11,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn --transpile-only server.ts",
     "start": "node build/server.js",
-    "build": "CI=false tsc",
+    "build": "set CI=false&&tsc",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false",
     "clean": "tsc --build --clean"
   },
   "author": "axotopia",
