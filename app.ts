@@ -22,11 +22,13 @@ app.use(express.json({ limit: "50mb" }));
 app.use(cookieParser());
 
 // cors
+const corsOptions = {
+  origin: 'https://al-doctor.vercel.app', 
+  credentials: true 
+};
+
 app.use(
-  cors({
-    origin: true,
-    credentials:true,
-  })
+  cors(corsOptions)
 );
 
 //requests Limiter
