@@ -10,13 +10,15 @@ exports.accessTokenOptions = {
     expires: new Date(Date.now() + accessTokenExpire * 1000 * 60),
     maxAge: accessTokenExpire * 1000 * 60,
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: 'none',
+    secure: true
 };
 exports.refreshTokenOptions = {
     expires: new Date(Date.now() + refreshTokenExpire * 1000 * 60 * 60 * 24),
     maxAge: refreshTokenExpire * 1000 * 60 * 60 * 24,
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: 'none',
+    secure: true
 };
 const sendToken = async (user, statusCode, res) => {
     const accessToken = await user.SignAccessToken();
