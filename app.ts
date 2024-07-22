@@ -22,6 +22,11 @@ app.use(express.json({ limit: "50mb" }));
 app.use(cookieParser());
 
 // cors
+const corsOptions = {
+  origin: ['https://al-doctor.vercel.app','http://localhost:3000'], 
+  credentials: true 
+};
+
 app.use(
   cors({
     origin: ['https://al-doctor.vercel.app','http://localhost:3000'],
