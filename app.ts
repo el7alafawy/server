@@ -28,10 +28,7 @@ const corsOptions = {
 };
 
 app.use(
-  cors({
-    origin: ['https://al-doctor.vercel.app','http://localhost:3000'],
-    credentials:true,
-  })
+  cors(corsOptions)
 );
 
 //requests Limiter
