@@ -9,6 +9,7 @@ import notificationRouter from "./routes/notification.router";
 import analyticsRouter from "./routes/analytics.route";
 import layoutRouter from "./routes/layout.route";
 import productRouter from "./routes/product.route";
+import purchaseRouter from "./routes/purchase.route";
 import { rateLimit } from 'express-rate-limit'
 
 require("dotenv").config();
@@ -45,10 +46,11 @@ const limiter = rateLimit({
 app.use("/api/v1", userRouter);
 app.use("/api/v1", courseRouter);
 app.use("/api/v1", orderRouter);
+app.use("/api/v1", productRouter);
+app.use("/api/v1",purchaseRouter);
 app.use("/api/v1", notificationRouter);
 app.use("/api/v1", analyticsRouter);
 app.use("/api/v1", layoutRouter);
-app.use("/api/v1", productRouter);
 
 // testing api
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
