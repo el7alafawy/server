@@ -15,6 +15,7 @@ const notification_router_1 = __importDefault(require("./routes/notification.rou
 const analytics_route_1 = __importDefault(require("./routes/analytics.route"));
 const layout_route_1 = __importDefault(require("./routes/layout.route"));
 const product_route_1 = __importDefault(require("./routes/product.route"));
+const purchase_route_1 = __importDefault(require("./routes/purchase.route"));
 const express_rate_limit_1 = require("express-rate-limit");
 require("dotenv").config();
 exports.app = (0, express_1.default)();
@@ -39,10 +40,11 @@ const limiter = (0, express_rate_limit_1.rateLimit)({
 exports.app.use("/api/v1", user_route_1.default);
 exports.app.use("/api/v1", course_route_1.default);
 exports.app.use("/api/v1", order_route_1.default);
+exports.app.use("/api/v1", product_route_1.default);
+exports.app.use("/api/v1", purchase_route_1.default);
 exports.app.use("/api/v1", notification_router_1.default);
 exports.app.use("/api/v1", analytics_route_1.default);
 exports.app.use("/api/v1", layout_route_1.default);
-exports.app.use("/api/v1", product_route_1.default);
 // testing api
 exports.app.get("/test", (req, res, next) => {
     res.status(200).json({
